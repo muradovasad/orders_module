@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  postgres31:
+    image: postgres:13.3
+    container_name: postgres_31
+    environment:
+      POSTGRES_DB: "orders_module"
+      POSTGRES_USER: "orders_module"
+      POSTGRES_PASSWORD: "pgpwd4habr"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./2. Init Database:/docker-entrypoint-initdb.d
+      - "./database:/var/lib/postgresql/data"
+    ports:
+      - "54331:5432"
+
+    restart: unless-stopped
+      
+  orders_module:
+    image: orders_module:0.0.1
+    depends_on:
+      - postgres31
+    volumes:
+      - .:/orders_module
+    build:
+      context: ./
+    environment:
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=orders_module
+      - SQL_USER=orders_module
+      - SQL_PASSWORD=pgpwd4habr
+      - SQL_HOST=postgres_31
+      - SQL_PORT=5432
+    expose: 
+      - 8031
+    ports:
+      - "8031:8031"
+    command: >
+      sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8031"
+    restart: always
