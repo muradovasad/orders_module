@@ -31,6 +31,7 @@ services:
       - SQL_PASSWORD=pgpwd4habr
       - SQL_HOST=postgres_31
       - SQL_PORT=5432
+      - DJANGO_KEY="django-insecure-2!j+c-(-l18v*yqx*jc+%*ti@&m4wbujf93ixs=0h&2v&gdvg%"
     expose: 
       - 8031
     ports:
